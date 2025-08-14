@@ -1,0 +1,16 @@
+version: 3
+projects:
+  - dir: dev
+    workflow: terragrunt
+  - dir: prod
+    workflow: terragrunt
+workflows:
+  terragrunt:
+    plan:
+      steps:
+        - run:
+            command: terragrunt plan -input=false -out=$PLANFILE
+            output: strip_refreshing
+    apply:
+      steps:
+        - run: terragrunt apply $PLANFILE

@@ -1,0 +1,17 @@
+generate "backend" {
+  path      = "backend.tf"
+  if_exists = "overwrite_terragrunt"
+  contents = <<EOF
+terraform {
+  backend "azurerm" {
+    resource_group_name  = "${resource_group}"
+    storage_account_name = "${storage_account}"
+    container_name       = "${container}"
+    key                  = "$${path_relative_to_include()}/terraform.tfstate"
+
+    use_azuread_auth = true
+    tenant_id        = "${tenant_id}"
+  }
+}
+EOF
+}
