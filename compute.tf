@@ -12,9 +12,14 @@ resource "azurerm_role_assignment" "blobs" {
 }
 
 # Atlantis webhook secret
-resource "random_string" "webhook_secret" {
+resource "random_password" "webhook_secret" {
   length  = 32
   special = false
+}
+
+# Atlantis web password
+resource "random_password" "web" {
+  length = 32
 }
 
 locals {
@@ -28,7 +33,6 @@ locals {
             - id: "github.com/${github_repository.example.full_name}"
               branch: /.*/
               allowed_overrides: [workflow]
-              allowed_workflows: [terragrunt]
               allow_custom_workflows: true
         EOF
       },
@@ -50,8 +54,11 @@ locals {
             --atlantis-url="http://${azurerm_dns_a_record.atlantis.name}.${var.azure_dns_zone_name}" \
             --gh-user="${var.github_owner}" \
             --gh-token="${var.github_token}" \
-            --gh-webhook-secret="${random_string.webhook_secret.result}" \
-            --repo-allowlist="github.com/${github_repository.example.full_name}"
+            --gh-webhook-secret="${random_password.webhook_secret.result}" \
+            --repo-allowlist="github.com/${github_repository.example.full_name}" \
+            --web-basic-auth=true \
+            --web-username=atlantis \
+            --web-password="${random_password.web.result}"
           ExecReload=/bin/kill --signal HUP $MAINPID
           KillMode=process
           KillSignal=SIGTERM
@@ -192,10 +199,6 @@ resource "azurerm_orchestrated_virtual_machine_scale_set" "default" {
       load_balancer_backend_address_pool_ids = [
         azurerm_lb_backend_address_pool.public.id,
       ]
-
-      public_ip_address {
-        name = "pip-atlantis"
-      }
     }
   }
 

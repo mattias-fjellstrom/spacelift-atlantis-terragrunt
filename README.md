@@ -34,10 +34,17 @@ To provision the sample you will need the following:
 
 When the apply is complete you can open your Atlantis instance on `http://atlantis.<your azure dns zone name>` (e.g. `http://atlantis.example.com`). You will have a new GitHub repository named `spacelift-atlantis-infrastructure` where you can test Atlantis with Terragrunt. The repository contains a sample Terragrunt configuration with a dev and a prod environment.
 
+Sign in to the web interface using `atlantis` as the username, and obtain the password using the following command:
+
+```console
+$ terraform output -raw atlantis_web_password
+abcdefgh1234...
+```
+
 If you need to access the underlying virtual machine you can do so using the SSH key that is provisioned by Terraform:
 
 ```console
-$ ssh -i servers.pem azureuser@<public IP of virtual machine>
+$ eval $(terraform output -raw ssh)
 ```
 
 Find the public IP of the virtual machine in your Azure environment.

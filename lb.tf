@@ -42,3 +42,15 @@ resource "azurerm_lb_rule" "http" {
     azurerm_lb_backend_address_pool.public.id,
   ]
 }
+
+resource "azurerm_lb_nat_rule" "ssh" {
+  name                           = "ssh"
+  resource_group_name            = azurerm_resource_group.default.name
+  loadbalancer_id                = azurerm_lb.public.id
+  protocol                       = "Tcp"
+  frontend_port_start            = 2222
+  frontend_port_end              = 2224
+  backend_port                   = 22
+  frontend_ip_configuration_name = azurerm_lb.public.frontend_ip_configuration[0].name
+  backend_address_pool_id        = azurerm_lb_backend_address_pool.public.id
+}

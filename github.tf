@@ -21,7 +21,7 @@ resource "github_repository_webhook" "name" {
   configuration {
     url          = "http://${azurerm_dns_a_record.atlantis.name}.${var.azure_dns_zone_name}/events"
     content_type = "application/json"
-    secret       = random_string.webhook_secret.result
+    secret       = random_password.webhook_secret.result
   }
 
   events = [
