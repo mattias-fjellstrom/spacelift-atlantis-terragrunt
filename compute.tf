@@ -129,7 +129,7 @@ data "cloudinit_config" "atlantis_server" {
     content      = <<-EOF
       #!/bin/bash
 
-      wget https://github.com/gruntwork-io/terragrunt/releases/download/alpha-20250813/terragrunt_linux_amd64
+      wget https://github.com/gruntwork-io/terragrunt/releases/download/v0.85.0/terragrunt_linux_amd64
       mv terragrunt_linux_amd64 terragrunt
       chown root:root terragrunt
       chmod +x terragrunt
